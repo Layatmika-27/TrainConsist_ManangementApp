@@ -1,45 +1,48 @@
-import java.util.ArrayList;
-import java.util.List;
+// Custom Exception
+class InvalidCapacityException extends Exception {
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
+}
 
 public class TrainConsistManagementApp {
 
-    // Goods Bogie class
-    static class GoodsBogie {
-        String type;
-        String cargo;
+    // Passenger Bogie class
+    static class PassengerBogie {
+        String name;
+        int capacity;
 
-        GoodsBogie(String type, String cargo) {
-            this.type = type;
-            this.cargo = cargo;
+        // Constructor with validation
+        PassengerBogie(String name, int capacity) throws InvalidCapacityException {
+            if (capacity <= 0) {
+                throw new InvalidCapacityException("Invalid capacity for bogie: " + name);
+            }
+            this.name = name;
+            this.capacity = capacity;
         }
 
         @Override
         public String toString() {
-            return type + " (" + cargo + ")";
+            return name + " (Capacity: " + capacity + ")";
         }
     }
 
     public static void main(String[] args) {
 
-        // Create list of goods bogies
-        List<GoodsBogie> bogies = new ArrayList<>();
-        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        bogies.add(new GoodsBogie("Box", "Coal"));
-        bogies.add(new GoodsBogie("Flatbed", "Steel"));
+        try {
+            // Valid bogie
+            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
+            System.out.println("Created: " + b1);
 
-        // Apply safety validation using stream + allMatch()
-        boolean isSafe = bogies.stream()
-                .allMatch(b -> {
-                    if (b.type.equalsIgnoreCase("Cylindrical")) {
-                        return b.cargo.equalsIgnoreCase("Petroleum");
-                    }
-                    return true;
-                });
+            // Invalid bogie (will throw exception)
+            PassengerBogie b2 = new PassengerBogie("InvalidBogie", 0);
+            System.out.println("Created: " + b2);
 
-        // Display result
-        System.out.println("Train Safety Compliance: " + isSafe);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
-        // Program continues
-        System.out.println("Validation complete.");
+        // Program continues safely
+        System.out.println("Execution continues...");
     }
 }
