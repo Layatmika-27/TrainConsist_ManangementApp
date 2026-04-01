@@ -1,10 +1,10 @@
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TrainConsistManagementApp {
 
-    // Bogie class (custom object)
+    // Bogie class (same as UC7)
     static class Bogie {
         String name;
         int capacity;
@@ -24,22 +24,22 @@ public class TrainConsistManagementApp {
 
         // Create list of bogies
         List<Bogie> bogies = new ArrayList<>();
-
-        // Add bogie objects
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 78));
         bogies.add(new Bogie("First Class", 24));
 
-        // Sort bogies by capacity using Comparator (lambda)
-        bogies.sort(Comparator.comparingInt(b -> b.capacity));
+        // Stream filtering (capacity > 60)
+        List<Bogie> filteredBogies = bogies.stream()
+                .filter(b -> b.capacity > 60)
+                .collect(Collectors.toList());
 
-        // Display sorted bogies
-        System.out.println("Bogies sorted by capacity:");
-        for (Bogie b : bogies) {
+        // Display filtered bogies
+        System.out.println("Bogies with capacity > 60:");
+        for (Bogie b : filteredBogies) {
             System.out.println(b);
         }
 
         // Program continues
-        System.out.println("Sorting complete.");
+        System.out.println("Filtering complete.");
     }
 }
