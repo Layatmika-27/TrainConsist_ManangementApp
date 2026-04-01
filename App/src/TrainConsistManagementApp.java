@@ -1,5 +1,5 @@
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrainConsistManagementApp {
 
@@ -12,18 +12,6 @@ public class TrainConsistManagementApp {
             this.name = name;
             this.capacity = capacity;
         }
-
-        // Category logic (for grouping)
-        String getCategory() {
-            if (capacity >= 70) return "High Capacity";
-            else if (capacity >= 40) return "Medium Capacity";
-            else return "Low Capacity";
-        }
-
-        @Override
-        public String toString() {
-            return name + " (" + capacity + ")";
-        }
     }
 
     public static void main(String[] args) {
@@ -33,20 +21,16 @@ public class TrainConsistManagementApp {
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 78));
         bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("Second Sitting", 50));
 
-        // Grouping using Stream API
-        Map<String, List<Bogie>> groupedBogies =
-                bogies.stream()
-                        .collect(Collectors.groupingBy(b -> b.getCategory()));
+        // Stream pipeline to calculate total capacity
+        int totalCapacity = bogies.stream()
+                .map(b -> b.capacity)
+                .reduce(0, Integer::sum);
 
-        // Display grouped result
-        System.out.println("Grouped Bogies:");
-        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
-        }
+        // Display result
+        System.out.println("Total Seating Capacity: " + totalCapacity);
 
         // Program continues
-        System.out.println("Grouping complete.");
+        System.out.println("Aggregation complete.");
     }
 }
