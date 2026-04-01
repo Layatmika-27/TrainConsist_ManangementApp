@@ -1,4 +1,3 @@
-// Custom Exception
 class InvalidCapacityException extends Exception {
     public InvalidCapacityException(String message) {
         super(message);
@@ -7,42 +6,40 @@ class InvalidCapacityException extends Exception {
 
 public class TrainConsistManagementApp {
 
-    // Passenger Bogie class
     static class PassengerBogie {
-        String name;
-        int capacity;
+        private String name;
+        private int capacity;
 
-        // Constructor with validation
-        PassengerBogie(String name, int capacity) throws InvalidCapacityException {
+        public PassengerBogie(String name, int capacity) throws InvalidCapacityException {
             if (capacity <= 0) {
-                throw new InvalidCapacityException("Invalid capacity for bogie: " + name);
+                throw new InvalidCapacityException("Capacity must be greater than zero");
             }
             this.name = name;
             this.capacity = capacity;
         }
 
-        @Override
-        public String toString() {
-            return name + " (Capacity: " + capacity + ")";
+        public String getName() {
+            return name;
+        }
+
+        public int getCapacity() {
+            return capacity;
         }
     }
 
     public static void main(String[] args) {
 
         try {
-            // Valid bogie
             PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
-            System.out.println("Created: " + b1);
+            System.out.println("Created: " + b1.getName() + " (" + b1.getCapacity() + ")");
 
-            // Invalid bogie (will throw exception)
-            PassengerBogie b2 = new PassengerBogie("InvalidBogie", 0);
-            System.out.println("Created: " + b2);
+            PassengerBogie b2 = new PassengerBogie("Invalid", 0); // will throw exception
+            System.out.println("Created: " + b2.getName());
 
         } catch (InvalidCapacityException e) {
             System.out.println("Error: " + e.getMessage());
         }
 
-        // Program continues safely
         System.out.println("Execution continues...");
     }
 }

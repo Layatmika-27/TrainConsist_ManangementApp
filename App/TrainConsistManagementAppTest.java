@@ -3,24 +3,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainConsistManagementAppTest {
 
-    // Custom Exception
     static class InvalidCapacityException extends Exception {
         public InvalidCapacityException(String message) {
             super(message);
         }
     }
 
-    // Passenger Bogie class
     static class PassengerBogie {
-        String name;
-        int capacity;
+        private String name;
+        private int capacity;
 
-        PassengerBogie(String name, int capacity) throws InvalidCapacityException {
+        public PassengerBogie(String name, int capacity) throws InvalidCapacityException {
             if (capacity <= 0) {
                 throw new InvalidCapacityException("Capacity must be greater than zero");
             }
             this.name = name;
             this.capacity = capacity;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getCapacity() {
+            return capacity;
         }
     }
 
@@ -34,37 +40,37 @@ public class TrainConsistManagementAppTest {
 
     @Test
     void testException_NegativeCapacityThrowsException() {
-        Exception exception = assertThrows(InvalidCapacityException.class, () -> {
+        InvalidCapacityException ex = assertThrows(InvalidCapacityException.class, () -> {
             new PassengerBogie("Invalid", -10);
         });
 
-        assertEquals("Capacity must be greater than zero", exception.getMessage());
+        assertEquals("Capacity must be greater than zero", ex.getMessage());
     }
 
     @Test
     void testException_ZeroCapacityThrowsException() {
-        Exception exception = assertThrows(InvalidCapacityException.class, () -> {
+        InvalidCapacityException ex = assertThrows(InvalidCapacityException.class, () -> {
             new PassengerBogie("Invalid", 0);
         });
 
-        assertEquals("Capacity must be greater than zero", exception.getMessage());
+        assertEquals("Capacity must be greater than zero", ex.getMessage());
     }
 
     @Test
     void testException_ExceptionMessageValidation() {
-        Exception exception = assertThrows(InvalidCapacityException.class, () -> {
+        InvalidCapacityException ex = assertThrows(InvalidCapacityException.class, () -> {
             new PassengerBogie("Test", -1);
         });
 
-        assertEquals("Capacity must be greater than zero", exception.getMessage());
+        assertEquals("Capacity must be greater than zero", ex.getMessage());
     }
 
     @Test
     void testException_ObjectIntegrityAfterCreation() throws InvalidCapacityException {
         PassengerBogie bogie = new PassengerBogie("AC Chair", 78);
 
-        assertEquals("AC Chair", bogie.name);
-        assertEquals(78, bogie.capacity);
+        assertEquals("AC Chair", bogie.getName());
+        assertEquals(78, bogie.getCapacity());
     }
 
     @Test
