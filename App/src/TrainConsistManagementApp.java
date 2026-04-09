@@ -1,46 +1,50 @@
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        // Sorted array of bogie IDs
-        String[] bogieIds = {"BG101", "BG205", "BG309", "BG412", "BG550"};
+        // Bogie collection (can be empty or populated)
+        List<String> bogieIds = new ArrayList<>();
 
-        // (Optional safety) Ensure sorted
-        Arrays.sort(bogieIds);
+        // Uncomment below to test non-empty case
+        // bogieIds.add("BG101");
+        // bogieIds.add("BG205");
 
-        // Search key
-        String searchKey = "BG309";
+        String searchKey = "BG101";
 
-        int low = 0;
-        int high = bogieIds.length - 1;
-        boolean found = false;
+        try {
+            boolean result = searchBogie(bogieIds, searchKey);
 
-        // Binary Search
-        while (low <= high) {
-            int mid = (low + high) / 2;
-
-            int comparison = bogieIds[mid].compareTo(searchKey);
-
-            if (comparison == 0) {
-                found = true;
-                break;
-            } else if (comparison < 0) {
-                low = mid + 1; // search right half
+            if (result) {
+                System.out.println("Bogie ID " + searchKey + " found.");
             } else {
-                high = mid - 1; // search left half
+                System.out.println("Bogie ID " + searchKey + " not found.");
+            }
+
+        } catch (IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        System.out.println("Program continues...");
+    }
+
+    // Search method with defensive programming
+    public static boolean searchBogie(List<String> bogies, String key) {
+
+        // Fail-fast check
+        if (bogies.isEmpty()) {
+            throw new IllegalStateException("Cannot perform search: No bogies available in the train.");
+        }
+
+        // Linear search
+        for (String id : bogies) {
+            if (id.equals(key)) {
+                return true;
             }
         }
 
-        // Display result
-        if (found) {
-            System.out.println("Bogie ID " + searchKey + " found.");
-        } else {
-            System.out.println("Bogie ID " + searchKey + " not found.");
-        }
-
-        // Program continues
-        System.out.println("Binary search complete.");
+        return false;
     }
 }
