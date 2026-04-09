@@ -1,77 +1,82 @@
 import org.junit.jupiter.api.Test;
-
-import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainConsistManagementAppTest {
 
-    // Reusing GoodsBogie class
-    static class GoodsBogie {
-        String type;
-        String cargo;
-
-        GoodsBogie(String type, String cargo) {
-            this.type = type;
-            this.cargo = cargo;
+    // Custom Exception
+    static class InvalidCapacityException extends Exception {
+        public InvalidCapacityException(String message) {
+            super(message);
         }
     }
 
-    // Helper method for safety validation
-    private boolean isTrainSafe(List<GoodsBogie> bogies) {
-        return bogies.stream()
-                .allMatch(b -> {
-                    if (b.type.equalsIgnoreCase("Cylindrical")) {
-                        return b.cargo.equalsIgnoreCase("Petroleum");
-                    }
-                    return true;
-                });
+    // Passenger Bogie class
+    static class PassengerBogie {
+        String name;
+        int capacity;
+
+        PassengerBogie(String name, int capacity) throws InvalidCapacityException {
+            if (capacity <= 0) {
+                throw new InvalidCapacityException("Capacity must be greater than zero");
+            }
+            this.name = name;
+            this.capacity = capacity;
+        }
     }
 
     @Test
-    void testSafety_AllBogiesValid() {
-        List<GoodsBogie> bogies = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Petroleum"),
-                new GoodsBogie("Box", "Coal"),
-                new GoodsBogie("Flatbed", "Steel")
-        );
-
-        assertTrue(isTrainSafe(bogies));
+    void testException_ValidCapacityCreation() {
+        assertDoesNotThrow(() -> {
+            PassengerBogie bogie = new PassengerBogie("Sleeper", 72);
+            assertNotNull(bogie);
+        });
     }
 
     @Test
-    void testSafety_CylindricalWithInvalidCargo() {
-        List<GoodsBogie> bogies = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Coal")
-        );
+    void testException_NegativeCapacityThrowsException() {
+        Exception exception = assertThrows(InvalidCapacityException.class, () -> {
+            new PassengerBogie("Invalid", -10);
+        });
 
-        assertFalse(isTrainSafe(bogies));
+        assertEquals("Capacity must be greater than zero", exception.getMessage());
     }
 
     @Test
-    void testSafety_NonCylindricalBogiesAllowed() {
-        List<GoodsBogie> bogies = Arrays.asList(
-                new GoodsBogie("Box", "Coal"),
-                new GoodsBogie("Open", "Grain")
-        );
+    void testException_ZeroCapacityThrowsException() {
+        Exception exception = assertThrows(InvalidCapacityException.class, () -> {
+            new PassengerBogie("Invalid", 0);
+        });
 
-        assertTrue(isTrainSafe(bogies));
+        assertEquals("Capacity must be greater than zero", exception.getMessage());
     }
 
     @Test
-    void testSafety_MixedBogiesWithViolation() {
-        List<GoodsBogie> bogies = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Petroleum"),
-                new GoodsBogie("Cylindrical", "Coal"), // violation
-                new GoodsBogie("Box", "Steel")
-        );
+    void testException_ExceptionMessageValidation() {
+        Exception exception = assertThrows(InvalidCapacityException.class, () -> {
+            new PassengerBogie("Test", -1);
+        });
 
-        assertFalse(isTrainSafe(bogies));
+        assertEquals("Capacity must be greater than zero", exception.getMessage());
     }
 
     @Test
-    void testSafety_EmptyBogieList() {
-        List<GoodsBogie> bogies = new ArrayList<>();
+    void testException_ObjectIntegrityAfterCreation() throws InvalidCapacityException {
+        PassengerBogie bogie = new PassengerBogie("AC Chair", 78);
 
-        assertTrue(isTrainSafe(bogies));
+        assertEquals("AC Chair", bogie.name);
+        assertEquals(78, bogie.capacity);
+    }
+
+    @Test
+    void testException_MultipleValidBogiesCreation() {
+        assertDoesNotThrow(() -> {
+            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
+            PassengerBogie b2 = new PassengerBogie("AC Chair", 78);
+            PassengerBogie b3 = new PassengerBogie("First Class", 24);
+
+            assertNotNull(b1);
+            assertNotNull(b2);
+            assertNotNull(b3);
+        });
     }
 }
