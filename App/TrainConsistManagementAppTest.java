@@ -1,96 +1,62 @@
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainConsistManagementAppTest {
 
-    // Custom Runtime Exception
-    static class CargoSafetyException extends RuntimeException {
-        public CargoSafetyException(String message) {
-            super(message);
-        }
-    }
+    // Helper method: Bubble Sort
+    private int[] bubbleSort(int[] arr) {
+        int[] result = arr.clone(); // preserve original
 
-    // Goods Bogie class
-    static class GoodsBogie {
-        String type;
-        String cargo;
-
-        GoodsBogie(String type) {
-            this.type = type;
-        }
-
-        void assignCargo(String cargo) {
-            try {
-                if (type.equalsIgnoreCase("Rectangular") &&
-                        cargo.equalsIgnoreCase("Petroleum")) {
-                    throw new CargoSafetyException("Unsafe assignment");
+        int n = result.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (result[j] > result[j + 1]) {
+                    int temp = result[j];
+                    result[j] = result[j + 1];
+                    result[j + 1] = temp;
                 }
-                this.cargo = cargo;
-
-            } catch (CargoSafetyException e) {
-                // handled
-
-            } finally {
-                System.out.println("Assignment attempt completed");
             }
         }
+        return result;
     }
 
     @Test
-    void testCargo_SafeAssignment() {
-        GoodsBogie bogie = new GoodsBogie("Cylindrical");
+    void testSort_BasicSorting() {
+        int[] input = {72, 56, 24, 70, 60};
+        int[] expected = {24, 56, 60, 70, 72};
 
-        bogie.assignCargo("Petroleum");
-
-        assertEquals("Petroleum", bogie.cargo);
+        assertArrayEquals(expected, bubbleSort(input));
     }
 
     @Test
-    void testCargo_UnsafeAssignmentHandled() {
-        GoodsBogie bogie = new GoodsBogie("Rectangular");
+    void testSort_AlreadySortedArray() {
+        int[] input = {24, 56, 60, 70, 72};
+        int[] expected = {24, 56, 60, 70, 72};
 
-        // Should not crash
-        assertDoesNotThrow(() -> bogie.assignCargo("Petroleum"));
+        assertArrayEquals(expected, bubbleSort(input));
     }
 
     @Test
-    void testCargo_CargoNotAssignedAfterFailure() {
-        GoodsBogie bogie = new GoodsBogie("Rectangular");
+    void testSort_DuplicateValues() {
+        int[] input = {72, 56, 56, 24};
+        int[] expected = {24, 56, 56, 72};
 
-        bogie.assignCargo("Petroleum");
-
-        assertNull(bogie.cargo);
+        assertArrayEquals(expected, bubbleSort(input));
     }
 
     @Test
-    void testCargo_ProgramContinuesAfterException() {
-        GoodsBogie b1 = new GoodsBogie("Rectangular");
-        GoodsBogie b2 = new GoodsBogie("Cylindrical");
+    void testSort_SingleElementArray() {
+        int[] input = {50};
+        int[] expected = {50};
 
-        assertDoesNotThrow(() -> {
-            b1.assignCargo("Petroleum"); // unsafe
-            b2.assignCargo("Coal");      // safe
-        });
-
-        assertEquals("Coal", b2.cargo);
+        assertArrayEquals(expected, bubbleSort(input));
     }
 
     @Test
-    void testCargo_FinallyBlockExecution() {
-        GoodsBogie bogie = new GoodsBogie("Rectangular");
+    void testSort_AllEqualValues() {
+        int[] input = {40, 40, 40};
+        int[] expected = {40, 40, 40};
 
-        // Capture console output
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(output));
-
-        bogie.assignCargo("Petroleum");
-
-        String consoleOutput = output.toString();
-
-        assertTrue(consoleOutput.contains("Assignment attempt completed"));
+        assertArrayEquals(expected, bubbleSort(input));
     }
 }
